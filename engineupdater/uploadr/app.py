@@ -1,10 +1,11 @@
-from flask import Flask, request, redirect, url_for, render_template
 import os
 import json
 import glob
 import os
-
 from uuid import uuid4
+
+from flask import Flask, request, redirect, url_for, render_template
+
 
 app = Flask(__name__)
 
@@ -44,11 +45,10 @@ def upload():
     for upload in request.files.getlist("file"):
         filename = upload.filename.rsplit("/")[0]
         if filename[-4:]==".zip":
-        	destination = "/".join([target, filename])
-        	print("Accept incoming file:", filename)
-        	print("Save it to:", destination)
-        	upload.save(destination)
-        
+            destination = "/".join([target, filename])
+            print("Accept incoming file:", filename)
+            print("Save it to:", destination)
+            upload.save(destination)
 
     if is_ajax:
         return ajax_response(True, upload_key)
@@ -69,15 +69,15 @@ def upload_complete(uuid):
     for file in glob.glob("{}/*.*".format(root)):
         fname = file.split(os.sep)[-1]
         files.append(fname)
-    
+
     cpCMD="echo "+uuid+" >"+root+"/version &&"+"rm -rf /opt/infra/newrelease/* && cp"+root+"/* /opt/infra/newrelease && unzip *.zip"
 
     os.system(cpCMD)
 
     return render_template("files.html",
-        uuid=uuid,
-        files=files,
-    )
+                           uuid=uuid,
+                           files=files,
+                           )
 
 
 def ajax_response(status, msg):
